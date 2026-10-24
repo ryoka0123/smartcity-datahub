@@ -127,17 +127,25 @@ def solo_admin(fn):
 
 @app.before_request
 def verificar_sesion():
-    rutas_publicas = {"login", "registro", "static"}
+    rutas_publicas = {"dashboard", "sensores", "detalle_reporte", "login", "registro", "static"}
     if request.endpoint and request.endpoint not in rutas_publicas:
         if not session.get("usuario"):
+            flash("Inicia sesión o regístrate para gestionar reportes.", "ok")
             return redirect(url_for("login"))
 
 
 # ---------- Rutas ----------
 @app.route("/")
 def dashboard():
-    u = session["usuario"]
-    if es_admin():
+    u = session.get("usuario")
+    sensores_resumen = query("""
+        SELECT s.*, z.nombre_zona,
+          (SELECT valor_medido FROM lectura_sensor l WHERE l.id_sensor=s.id_sensor ORDER BY l.id_lectura DESC LIMIT 1) AS ultimo_valor,
+          (SELECT unidad_medida FROM lectura_sensor l WHERE l.id_sensor=s.id_sensor ORDER BY l.id_lectura DESC LIMIT 1) AS unidad,
+          (SELECT alerta_umbral_critico FROM lectura_sensor l WHERE l.id_sensor=s.id_sensor ORDER BY l.id_lectura DESC LIMIT 1) AS alerta
+        FROM sensor_iot s JOIN zona_urbana z ON z.id_zona = s.id_zona""")
+
+    if not u or es_admin():
         kpis = {
             "total": query("SELECT COUNT(*) n FROM reporte_incidencia", one=True)["n"],
             "pendientes": query("SELECT COUNT(*) n FROM reporte_incidencia WHERE estado_actual='Pendiente'", one=True)["n"],
@@ -170,7 +178,7 @@ def dashboard():
             (id_c,),
         )
     return render_template("dashboard.html", kpis=kpis, por_categoria=por_categoria,
-                           reportes=reportes)
+                           reportes=reportes, sensores=sensores_resumen)
 
 
 @app.route("/reportes")

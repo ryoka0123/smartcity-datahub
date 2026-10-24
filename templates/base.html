@@ -9,7 +9,7 @@
 </head>
 <body>
   <nav>
-    <span class="logo">SmartCity DataHub</span>
+    <a href="{{ url_for('dashboard') }}" class="logo" style="color:#fff">SmartCity DataHub</a>
     {% if session.get('usuario') %}
       {% if session['usuario']['rol'] == 'Administrador' %}
         <!-- MENÚ EXCLUSIVO DE ADMINISTRADOR -->
@@ -27,6 +27,11 @@
         <a href="{{ url_for('nuevo_reporte') }}">+ Reportar Incidencia</a>
         <a href="{{ url_for('sensores') }}">Calidad del Aire (IoT)</a>
       {% endif %}
+    {% else %}
+      <!-- MENÚ PÚBLICO DE INICIO (INDEX) -->
+      <a href="{{ url_for('dashboard') }}">Inicio</a>
+      <a href="{{ url_for('sensores') }}">Sensores IoT en Vivo</a>
+      <a href="{{ url_for('nuevo_reporte') }}">+ Reportar Incidencia</a>
     {% endif %}
 
     <div style="margin-left:auto; display:flex; align-items:center; gap:12px">
@@ -39,7 +44,7 @@
         </span>
         <a href="{{ url_for('logout') }}" style="background:#dc2626; color:#fff; padding:4px 10px; border-radius:5px; font-size:12px">Salir</a>
       {% else %}
-        <a href="{{ url_for('login') }}" style="color:#cfe0f3">Iniciar sesión</a>
+        <a href="{{ url_for('login') }}" style="color:#cfe0f3; font-weight:600">Iniciar sesión</a>
         <a href="{{ url_for('registro') }}" style="background:#0070c0; color:#fff; padding:5px 12px; border-radius:5px; font-weight:600">Registrarse</a>
       {% endif %}
     </div>

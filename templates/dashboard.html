@@ -1,36 +1,98 @@
 {% extends "base.html" %}
 {% block content %}
-{% if session.get('usuario') and session['usuario']['rol'] == 'Administrador' %}
-  <h1>Panel de Control Municipal (Rol: Administrador) · Bucaramanga</h1>
+
+{% if not session.get('usuario') %}
+  <!-- BANNER DE INICIO PÚBLICO (INDEX) -->
+  <div class="card" style="background:linear-gradient(135deg,#003366 0%,#005a9c 100%); color:#fff; border:none; padding:24px 28px">
+    <div class="row" style="justify-content:space-between">
+      <div style="max-width:680px">
+        <span class="badge" style="background:#f59e0b; color:#0f172a; margin-bottom:8px; display:inline-block">ODS 11 · Ciudades Inteligentes · Bucaramanga (UTS)</span>
+        <h1 style="color:#fff; margin:4px 0 8px 0; font-size:26px">SmartCity DataHub · Portal Urbano de Bucaramanga</h1>
+        <p style="margin:0; color:#dbeafe; font-size:14.5px; line-height:1.5">
+          Plataforma de monitoreo de incidencias viales, semaforización y calidad del aire en tiempo real.
+          Explora el mapa público de la ciudad o inicia sesión para registrar y gestionar reportes.
+        </p>
+      </div>
+      <div class="row" style="gap:10px">
+        <a class="btn" href="{{ url_for('login') }}" style="background:#f59e0b; color:#0f172a; font-weight:700">🔑 Iniciar sesión</a>
+        <a class="btn" href="{{ url_for('registro') }}" style="background:#ffffff; color:#003366; font-weight:700">📝 Registrarse</a>
+      </div>
+    </div>
+  </div>
+{% elif session['usuario']['rol'] == 'Administrador' %}
+  <div class="row" style="justify-content:space-between; margin-bottom:14px">
+    <h1 style="margin:0">Panel de Control Municipal (Rol: Administrador) · Bucaramanga</h1>
+    <div class="row">
+      <a class="btn sm" href="{{ url_for('reportes') }}">Gestionar Reportes</a>
+      <a class="btn sm" href="{{ url_for('cuadrillas') }}">CRUD Cuadrillas</a>
+      <a class="btn sm" href="{{ url_for('usuarios') }}">CRUD Usuarios</a>
+    </div>
+  </div>
 {% else %}
-  <h1>Portal del Ciudadano · Mis Incidencias en Bucaramanga</h1>
+  <div class="row" style="justify-content:space-between; margin-bottom:14px">
+    <h1 style="margin:0">Portal del Ciudadano · Mis Incidencias en Bucaramanga</h1>
+    <div class="row">
+      <a class="btn" href="{{ url_for('nuevo_reporte') }}">+ Reportar Nueva Incidencia</a>
+      <a class="btn sec" href="{{ url_for('reportes') }}">Ver / Editar Mis Reportes</a>
+    </div>
+  </div>
 {% endif %}
+
+<!-- KPIS EN VIVO -->
 <div class="grid kpis" style="margin-bottom:18px">
-  <div class="kpi"><strong>{{ kpis.total }}</strong><span>Reportes totales</span></div>
+  <div class="kpi"><strong>{{ kpis.total }}</strong><span>Reportes registrados</span></div>
   <div class="kpi"><strong>{{ kpis.pendientes }}</strong><span>Pendientes</span></div>
   <div class="kpi"><strong>{{ kpis.atencion }}</strong><span>En atención</span></div>
   <div class="kpi"><strong>{{ kpis.resueltos }}</strong><span>Resueltos</span></div>
-  <div class="kpi"><strong>{{ kpis.alertas }}</strong><span>Alertas de sensores</span></div>
+  <div class="kpi"><strong>{{ kpis.alertas }}</strong><span>Alertas de sensores IoT</span></div>
 </div>
+
+<!-- MAPA Y CATEGORÍAS -->
 <div class="grid two">
-  <div class="card"><h2>Mapa de incidencias</h2><div id="map"></div></div>
   <div class="card">
-    <h2>Reportes por categoría</h2>
+    <h2>📍 Mapa interactivo de incidencias en Bucaramanga</h2>
+    <div id="map"></div>
+  </div>
+  <div class="card">
+    <h2>📊 Distribución por categoría</h2>
     {% for c in por_categoria %}
       <div class="muted">{{ c.nombre_categoria }} ({{ c.n }})</div>
-      <div class="bar" style="margin-bottom:10px"><div style="width: {{ (c.n / (kpis.total or 1) * 100)|round }}%"></div></div>
+      <div class="bar" style="margin-bottom:12px"><div style="width: {{ (c.n / (kpis.total or 1) * 100)|round }}%"></div></div>
+    {% endfor %}
+
+    <h2 style="margin-top:20px">📡 Estado rápido Sensores IoT</h2>
+    {% for s in sensores %}
+      <div style="border-top:1px solid #e5e9f0; padding:7px 0; font-size:13px" class="row" style="justify-content:space-between">
+        <span><b>{{ s.codigo_serie }}</b> · {{ s.nombre_zona }}</span>
+        <span style="margin-left:auto; font-weight:700; color:{{ '#dc2626' if s.alerta else '#003366' }}">
+          {{ s.ultimo_valor }} {{ s.unidad }}
+        </span>
+      </div>
     {% endfor %}
   </div>
 </div>
+
+<!-- TABLA DE REPORTES RECIENTES -->
 <div class="card">
-  <h2>Últimos reportes</h2>
+  <div class="row" style="justify-content:space-between; margin-bottom:10px">
+    <h2 style="margin:0">📋 Últimos reportes de la ciudad</h2>
+    {% if session.get('usuario') %}
+      <a class="btn sm" href="{{ url_for('reportes') }}">Ir al CRUD de Reportes ➔</a>
+    {% else %}
+      <a class="btn sm" href="{{ url_for('login') }}">Inicia sesión para crear o editar reportes ➔</a>
+    {% endif %}
+  </div>
   <table>
-    <tr><th>#</th><th>Zona</th><th>Categoría</th><th>Estado</th></tr>
-    {% for r in reportes[:6] %}
+    <tr><th>#</th><th>Fecha</th><th>Zona</th><th>Categoría</th><th>Ciudadano</th><th>Estado</th><th>Acción</th></tr>
+    {% for r in reportes[:8] %}
     <tr>
-      <td><a href="{{ url_for('detalle_reporte', id_reporte=r.id_reporte) }}">{{ r.id_reporte }}</a></td>
-      <td>{{ r.nombre_zona }}</td><td>{{ r.nombre_categoria }}</td>
+      <td><a href="{{ url_for('detalle_reporte', id_reporte=r.id_reporte) }}">#{{ r.id_reporte }}</a></td>
+      <td>{{ r.fecha_hora_reporte }}</td>
+      <td>{{ r.nombre_zona }}</td>
+      <td>{{ r.nombre_categoria }}</td>
+      <td>{{ r.nombre_completo }}</td>
       <td><span class="badge b-{{ r.estado_actual|replace(' ','-') }}">{{ r.estado_actual }}</span></td>
+      <td><a class="btn sm sec" href="{{ url_for('detalle_reporte', id_reporte=r.id_reporte) }}">Ver detalle</a></td>
     </tr>
     {% endfor %}
   </table>
