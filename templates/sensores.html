@@ -1,24 +1,33 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Sensores IoT</h1>
+<div class="row" style="justify-content:space-between; margin-bottom:14px">
+  <h1 style="margin:0">Sensores IoT · Telemetría en Tiempo Real (Bucaramanga)</h1>
+  <form method="post" action="{{ url_for('actualizar_todos_sensores') }}">
+    <button class="btn" type="submit">🔄 Consultar los 3 sensores en vivo (API Open-Meteo)</button>
+  </form>
+</div>
+<p class="muted" style="margin-bottom:16px">
+  Conectado en tiempo real a la API pública de calidad del aire y emisiones de <b>Open-Meteo</b> usando las coordenadas GPS de cada comuna en Bucaramanga.
+</p>
 <div class="grid" style="grid-template-columns:repeat(3,1fr)">
   {% for s in sensores %}
   <div class="card" style="{{ 'border-color:#dc2626' if s.alerta }}">
     <h2>{{ s.codigo_serie }}</h2>
     <div class="muted">{{ s.tipo_sensor }} · {{ s.nombre_zona }}</div>
+    <div class="muted" style="font-size:11px">GPS: {{ s.latitud }}, {{ s.longitud }}</div>
     <p style="font-size:28px; margin:10px 0; color:{{ '#dc2626' if s.alerta else '#003366' }}">
       {{ s.ultimo_valor if s.ultimo_valor is not none else '—' }} <small style="font-size:14px">{{ s.unidad or '' }}</small></p>
-    <div class="muted">{{ '⚠ Alerta de umbral crítico' if s.alerta else 'Valor normal' }}<br>{{ s.fecha or '' }}</div>
+    <div class="muted">{{ '⚠ Alerta de umbral crítico' if s.alerta else '✓ Valor dentro del rango normal' }}<br>{{ s.fecha or '' }}</div>
     <form method="post" action="{{ url_for('simular_lectura', id_sensor=s.id_sensor) }}" style="margin-top:10px">
-      <button class="btn sm" type="submit">Simular lectura</button>
+      <button class="btn sm" type="submit">📡 Obtener lectura real (API)</button>
     </form>
   </div>
   {% endfor %}
 </div>
 <div class="card">
-  <h2>Historial reciente de lecturas</h2>
+  <h2>Historial reciente de lecturas (Tabla: LECTURA_SENSOR)</h2>
   <table>
-    <tr><th>Fecha</th><th>Sensor</th><th>Tipo</th><th>Valor</th><th>Alerta</th></tr>
+    <tr><th>Fecha</th><th>Sensor</th><th>Métrica</th><th>Valor medido</th><th>Alerta</th></tr>
     {% for l in historial %}
     <tr><td>{{ l.fecha_hora_lectura }}</td><td>{{ l.codigo_serie }}</td><td>{{ l.tipo_sensor }}</td>
         <td>{{ l.valor_medido }} {{ l.unidad_medida }}</td><td>{{ '⚠ Sí' if l.alerta_umbral_critico else 'No' }}</td></tr>

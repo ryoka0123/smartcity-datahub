@@ -37,10 +37,10 @@ INSERT INTO intervencion_mantenimiento (id_reporte, id_cuadrilla, fecha_cierre, 
 
 INSERT INTO sensor_iot (id_zona, codigo_serie, tipo_sensor, latitud, longitud, estado_operativo, fecha_instalacion) VALUES
 (2, 'SEN-BGA-01', 'Calidad del aire PM2.5', 7.1050, -73.1230, 'Activo', '2026-03-10'),
-(3, 'SEN-BGA-02', 'Flujo vehicular', 7.1190, -73.1230, 'Activo', '2026-03-12'),
-(1, 'SEN-BGA-03', 'Ruido ambiental', 7.1180, -73.1110, 'Activo', '2026-04-02');
+(3, 'SEN-BGA-02', 'Emisión vehicular CO (Tráfico)', 7.1190, -73.1230, 'Activo', '2026-03-12'),
+(1, 'SEN-BGA-03', 'Material particulado PM10', 7.1180, -73.1110, 'Activo', '2026-04-02');
 
 INSERT INTO lectura_sensor (id_sensor, valor_medido, unidad_medida, alerta_umbral_critico) VALUES
 (1, 18.4, 'µg/m³', 0),
-(2, 82, 'veh/min', 1),
-(3, 64.2, 'dB', 0);
+(2, 245.0, 'µg/m³', 0),
+(3, 26.8, 'µg/m³', 0);

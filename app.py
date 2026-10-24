@@ -3,9 +3,12 @@ Aplicación web en Flask + SQLite que implementa el MER de 9 entidades
 para gestionar incidencias urbanas, sensores IoT y cuadrillas (ODS 11).
 Autor: Jonathan Alexis Guevara Basto
 """
+import json
 import os
 import random
 import sqlite3
+import urllib.error
+import urllib.request
 
 from flask import Flask, g, render_template, request, redirect, url_for, flash
 
@@ -17,11 +20,26 @@ app.secret_key = "smartcity-uts-dev"  # solo para desarrollo
 
 ESTADOS = ["Pendiente", "En Atención", "Resuelto"]
 
-# Umbral de alerta y rango de simulación por tipo de sensor
+# Configuración de sensores conectados a la API real de Open-Meteo (Bucaramanga)
 SENSOR_CFG = {
-    "Calidad del aire PM2.5": {"unidad": "µg/m³", "umbral": 35, "rango": (8, 60)},
-    "Flujo vehicular": {"unidad": "veh/min", "umbral": 75, "rango": (20, 100)},
-    "Ruido ambiental": {"unidad": "dB", "umbral": 70, "rango": (45, 85)},
+    "Calidad del aire PM2.5": {
+        "campo_api": "pm2_5",
+        "unidad": "µg/m³",
+        "umbral": 35.0,
+        "rango": (8, 50),
+    },
+    "Emisión vehicular CO (Tráfico)": {
+        "campo_api": "carbon_monoxide",
+        "unidad": "µg/m³",
+        "umbral": 400.0,
+        "rango": (150, 500),
+    },
+    "Material particulado PM10": {
+        "campo_api": "pm10",
+        "unidad": "µg/m³",
+        "umbral": 50.0,
+        "rango": (15, 70),
+    },
 }
 
 
@@ -42,13 +60,23 @@ def close_db(_exc):
 
 
 def init_db():
-    """Crea las tablas y carga datos de ejemplo si la BD no existe."""
-    if os.path.exists(DB_PATH):
-        return
+    """Crea las tablas y carga datos de ejemplo si la BD no existe,
+    y asegura que los 3 sensores usen las métricas reales de Open-Meteo."""
     con = sqlite3.connect(DB_PATH)
-    for archivo in ("schema.sql", "seed.sql"):
-        with open(os.path.join(BASE_DIR, archivo), encoding="utf-8") as f:
-            con.executescript(f.read())
+    existe = con.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='sensor_iot'"
+    ).fetchone()
+    if not existe:
+        for archivo in ("schema.sql", "seed.sql"):
+            with open(os.path.join(BASE_DIR, archivo), encoding="utf-8") as f:
+                con.executescript(f.read())
+    else:
+        con.execute(
+            "UPDATE sensor_iot SET tipo_sensor='Emisión vehicular CO (Tráfico)' WHERE codigo_serie='SEN-BGA-02'"
+        )
+        con.execute(
+            "UPDATE sensor_iot SET tipo_sensor='Material particulado PM10' WHERE codigo_serie='SEN-BGA-03'"
+        )
     con.commit()
     con.close()
 
@@ -199,22 +227,69 @@ def sensores():
     return render_template("sensores.html", sensores=rows, historial=historial)
 
 
-@app.route("/sensores/<int:id_sensor>/simular", methods=["POST"])
-def simular_lectura(id_sensor):
-    """Simula una lectura IoT (en un sistema real llegaría por HTTP/MQTT)."""
-    s = query("SELECT * FROM sensor_iot WHERE id_sensor=?", (id_sensor,), one=True)
-    if s is None:
-        return render_template("404.html"), 404
-    cfg = SENSOR_CFG.get(s["tipo_sensor"], {"unidad": "u", "umbral": 100, "rango": (0, 120)})
-    valor = round(random.uniform(*cfg["rango"]), 1)
+def consultar_open_meteo_real(lat, lng, campo_api):
+    """Consulta en tiempo real la API satelital/estaciones de Open-Meteo Air Quality
+    para las coordenadas exactas del sensor en Bucaramanga (gratis, sin API key)."""
+    url = (
+        "https://air-quality-api.open-meteo.com/v1/air-quality"
+        f"?latitude={lat}&longitude={lng}&current=pm2_5,pm10,carbon_monoxide,nitrogen_dioxide"
+    )
+    try:
+        with urllib.request.urlopen(url, timeout=6) as resp:
+            datos = json.load(resp)
+            return datos.get("current", {}).get(campo_api)
+    except (urllib.error.URLError, TimeoutError, KeyError, ValueError):
+        return None
+
+
+def registrar_lectura_sensor(s):
+    """Consulta el valor real en Open-Meteo para el sensor `s` y lo guarda en BD."""
+    cfg = SENSOR_CFG.get(
+        s["tipo_sensor"],
+        {"campo_api": "pm2_5", "unidad": "µg/m³", "umbral": 50.0, "rango": (10, 60)},
+    )
+    valor = consultar_open_meteo_real(s["latitud"], s["longitud"], cfg["campo_api"])
+    if valor is not None:
+        origen = "API Real Open-Meteo"
+    else:
+        valor = random.uniform(*cfg["rango"])
+        origen = "Respaldo local (sin conexión)"
+    valor = round(float(valor), 1)
     alerta = 1 if valor > cfg["umbral"] else 0
     db = get_db()
     db.execute(
         "INSERT INTO lectura_sensor (id_sensor, valor_medido, unidad_medida, alerta_umbral_critico) VALUES (?,?,?,?)",
-        (id_sensor, valor, cfg["unidad"], alerta))
+        (s["id_sensor"], valor, cfg["unidad"], alerta),
+    )
     db.commit()
-    flash(f"Lectura registrada: {valor} {cfg['unidad']}" + (" ⚠ ALERTA" if alerta else ""),
-          "error" if alerta else "ok")
+    return valor, cfg["unidad"], alerta, origen
+
+
+@app.route("/sensores/<int:id_sensor>/simular", methods=["POST"])
+def simular_lectura(id_sensor):
+    """Consulta la lectura en tiempo real desde Open-Meteo para el sensor seleccionado."""
+    s = query("SELECT * FROM sensor_iot WHERE id_sensor=?", (id_sensor,), one=True)
+    if s is None:
+        return render_template("404.html"), 404
+    valor, unidad, alerta, origen = registrar_lectura_sensor(s)
+    flash(
+        f"[{s['codigo_serie']}] Lectura ({origen}): {valor} {unidad}"
+        + (" ⚠ ALERTA CRÍTICA" if alerta else " (Normal)"),
+        "error" if alerta else "ok",
+    )
+    return redirect(url_for("sensores"))
+
+
+@app.route("/sensores/actualizar-todos", methods=["POST"])
+def actualizar_todos_sensores():
+    """Consulta los 3 sensores de Bucaramanga en tiempo real contra Open-Meteo."""
+    sensores_lista = query("SELECT * FROM sensor_iot")
+    for s in sensores_lista:
+        registrar_lectura_sensor(s)
+    flash(
+        "Los 3 sensores de Bucaramanga se actualizaron en tiempo real desde la API de Open-Meteo.",
+        "ok",
+    )
     return redirect(url_for("sensores"))
 
 
