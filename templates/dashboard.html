@@ -50,7 +50,15 @@
 <!-- MAPA Y CATEGORÍAS -->
 <div class="grid two">
   <div class="card">
-    <h2>📍 Mapa interactivo de incidencias en Bucaramanga</h2>
+    <div class="row" style="justify-content:space-between; margin-bottom:10px">
+      <h2 style="margin:0">📍 Mapa de Incidencias y Sensores IoT · Bucaramanga</h2>
+      <div class="row" style="gap:10px; font-size:12px">
+        <span>🔴 Pendiente</span>
+        <span>🟠 En Atención</span>
+        <span>🟢 Resuelto</span>
+        <span>📡 Sensor IoT</span>
+      </div>
+    </div>
     <div id="map"></div>
   </div>
   <div class="card">
@@ -102,15 +110,53 @@
 <script>
   const map = L.map('map').setView([7.1155, -73.1185], 13);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; OpenStreetMap'}).addTo(map);
+
+  // 1. Capa de Reportes Ciudadanos
   const pts = [
     {% for r in reportes %}
-    {id: {{ r.id_reporte }}, lat: {{ r.latitud }}, lng: {{ r.longitud }}, estado: {{ r.estado_actual|tojson }}, cat: {{ r.nombre_categoria|tojson }}},
+    {id: {{ r.id_reporte }}, lat: {{ r.latitud }}, lng: {{ r.longitud }}, estado: {{ r.estado_actual|tojson }}, cat: {{ r.nombre_categoria|tojson }}, zona: {{ r.nombre_zona|tojson }}},
     {% endfor %}
   ];
   const color = {"Pendiente": "#dc2626", "En Atención": "#d97706", "Resuelto": "#16a34a"};
   pts.forEach(p => {
-    L.circleMarker([p.lat, p.lng], {radius: 9, color: color[p.estado], fillOpacity: .8})
-      .addTo(map).bindPopup(`<b>#${p.id}</b> ${p.cat}<br>${p.estado}<br><a href="/reportes/${p.id}">Ver detalle</a>`);
+    L.circleMarker([p.lat, p.lng], {radius: 9, color: color[p.estado], fillColor: color[p.estado], fillOpacity: 0.85, weight: 2})
+      .addTo(map).bindPopup(`<b>Reporte #${p.id}</b> · ${p.zona}<br>${p.cat}<br>Estado: <b>${p.estado}</b><br><a href="/reportes/${p.id}">Ver detalle ➔</a>`);
+  });
+
+  // 2. Capa de Estaciones de Sensores IoT (Icono distintivo con lectura en vivo)
+  const sensores = [
+    {% for s in sensores %}
+    {
+      codigo: {{ s.codigo_serie|tojson }},
+      tipo: {{ s.tipo_sensor|tojson }},
+      zona: {{ s.nombre_zona|tojson }},
+      lat: {{ s.latitud }},
+      lng: {{ s.longitud }},
+      valor: {{ (s.ultimo_valor if s.ultimo_valor is not none else 0)|tojson }},
+      unidad: {{ (s.unidad or '')|tojson }},
+      alerta: {{ (s.alerta or 0)|tojson }}
+    },
+    {% endfor %}
+  ];
+
+  sensores.forEach(s => {
+    const bgSensor = s.alerta ? "#dc2626" : "#0284c7";
+    const iconoSensor = L.divIcon({
+      className: "",
+      html: `<div style="background:${bgSensor}; color:#fff; border:2px solid #fff; border-radius:8px; padding:3px 7px; font-size:11px; font-weight:800; box-shadow:0 2px 6px rgba(0,0,0,0.35); white-space:nowrap;">📡 ${s.codigo}</div>`,
+      iconSize: [95, 24],
+      iconAnchor: [47, 12]
+    });
+
+    L.marker([s.lat, s.lng], {icon: iconoSensor})
+      .addTo(map)
+      .bindPopup(
+        `<b>📡 Sensor IoT: ${s.codigo}</b><br>` +
+        `Zona: ${s.zona}<br>` +
+        `Métrica: ${s.tipo}<br>` +
+        `Lectura actual: <b style="color:${bgSensor}; font-size:14px">${s.valor} ${s.unidad}</b><br>` +
+        `<a href="/sensores">Ir al panel de telemetría IoT ➔</a>`
+      );
   });
 </script>
 {% endblock %}
