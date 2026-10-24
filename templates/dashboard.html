@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Panel de control · Bucaramanga</h1>
+<div class="grid kpis" style="margin-bottom:18px">
+  <div class="kpi"><strong>{{ kpis.total }}</strong><span>Reportes totales</span></div>
+  <div class="kpi"><strong>{{ kpis.pendientes }}</strong><span>Pendientes</span></div>
+  <div class="kpi"><strong>{{ kpis.atencion }}</strong><span>En atención</span></div>
+  <div class="kpi"><strong>{{ kpis.resueltos }}</strong><span>Resueltos</span></div>
+  <div class="kpi"><strong>{{ kpis.alertas }}</strong><span>Alertas de sensores</span></div>
+</div>
+<div class="grid two">
+  <div class="card"><h2>Mapa de incidencias</h2><div id="map"></div></div>
+  <div class="card">
+    <h2>Reportes por categoría</h2>
+    {% for c in por_categoria %}
+      <div class="muted">{{ c.nombre_categoria }} ({{ c.n }})</div>
+      <div class="bar" style="margin-bottom:10px"><div style="width: {{ (c.n / (kpis.total or 1) * 100)|round }}%"></div></div>
+    {% endfor %}
+  </div>
+</div>
+<div class="card">
+  <h2>Últimos reportes</h2>
+  <table>
+    <tr><th>#</th><th>Zona</th><th>Categoría</th><th>Estado</th></tr>
+    {% for r in reportes[:6] %}
+    <tr>
+      <td><a href="{{ url_for('detalle_reporte', id_reporte=r.id_reporte) }}">{{ r.id_reporte }}</a></td>
+      <td>{{ r.nombre_zona }}</td><td>{{ r.nombre_categoria }}</td>
+      <td><span class="badge b-{{ r.estado_actual|replace(' ','-') }}">{{ r.estado_actual }}</span></td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+  const map = L.map('map').setView([7.1155, -73.1185], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; OpenStreetMap'}).addTo(map);
+  const pts = [
+    {% for r in reportes %}
+    {id: {{ r.id_reporte }}, lat: {{ r.latitud }}, lng: {{ r.longitud }}, estado: {{ r.estado_actual|tojson }}, cat: {{ r.nombre_categoria|tojson }}},
+    {% endfor %}
+  ];
+  const color = {"Pendiente": "#dc2626", "En Atención": "#d97706", "Resuelto": "#16a34a"};
+  pts.forEach(p => {
+    L.circleMarker([p.lat, p.lng], {radius: 9, color: color[p.estado], fillOpacity: .8})
+      .addTo(map).bindPopup(`<b>#${p.id}</b> ${p.cat}<br>${p.estado}<br><a href="/reportes/${p.id}">Ver detalle</a>`);
+  });
+</script>
+{% endblock %}

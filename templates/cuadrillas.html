@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Cuadrillas operativas</h1>
+<div class="card">
+  <table>
+    <tr><th>Cuadrilla</th><th>Especialidad</th><th>Responsable</th><th>Teléfono</th><th>Intervenciones</th><th>Costo acumulado</th><th>Estado</th></tr>
+    {% for q in cuadrillas %}
+    <tr><td>{{ q.nombre_cuadrilla }}</td><td>{{ q.especialidad_tecnica }}</td><td>{{ q.responsable_turno }}</td>
+        <td>{{ q.telefono_emergencia }}</td><td>{{ q.total }}</td><td>${{ '{:,.0f}'.format(q.costo) }}</td>
+        <td><span class="badge {{ 'b-Resuelto' if q.disponible else 'b-En-Atención' }}">{{ 'Disponible' if q.disponible else 'En servicio' }}</span></td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

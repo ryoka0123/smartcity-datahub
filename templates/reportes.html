@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Reportes de incidencias</h1>
+<div class="card">
+  <form method="get" class="row">
+    <label style="margin:0">Estado:</label>
+    <select name="estado" style="width:auto" onchange="this.form.submit()">
+      <option value="">Todos</option>
+      {% for e in estados %}<option {{ 'selected' if e == estado }}>{{ e }}</option>{% endfor %}
+    </select>
+    <a class="btn" href="{{ url_for('nuevo_reporte') }}">+ Nuevo reporte</a>
+  </form>
+</div>
+<div class="card">
+  <table>
+    <tr><th>#</th><th>Fecha</th><th>Zona</th><th>Categoría</th><th>SLA</th><th>Ciudadano</th><th>Estado</th></tr>
+    {% for r in reportes %}
+    <tr>
+      <td><a href="{{ url_for('detalle_reporte', id_reporte=r.id_reporte) }}">{{ r.id_reporte }}</a></td>
+      <td>{{ r.fecha_hora_reporte }}</td><td>{{ r.nombre_zona }}</td><td>{{ r.nombre_categoria }}</td>
+      <td>{{ r.sla_horas_respuesta }} h</td><td>{{ r.nombre_completo }}</td>
+      <td><span class="badge b-{{ r.estado_actual|replace(' ','-') }}">{{ r.estado_actual }}</span></td>
+    </tr>
+    {% else %}
+    <tr><td colspan="7" class="muted">No hay reportes con ese filtro.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

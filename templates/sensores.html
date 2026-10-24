@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Sensores IoT</h1>
+<div class="grid" style="grid-template-columns:repeat(3,1fr)">
+  {% for s in sensores %}
+  <div class="card" style="{{ 'border-color:#dc2626' if s.alerta }}">
+    <h2>{{ s.codigo_serie }}</h2>
+    <div class="muted">{{ s.tipo_sensor }} · {{ s.nombre_zona }}</div>
+    <p style="font-size:28px; margin:10px 0; color:{{ '#dc2626' if s.alerta else '#003366' }}">
+      {{ s.ultimo_valor if s.ultimo_valor is not none else '—' }} <small style="font-size:14px">{{ s.unidad or '' }}</small></p>
+    <div class="muted">{{ '⚠ Alerta de umbral crítico' if s.alerta else 'Valor normal' }}<br>{{ s.fecha or '' }}</div>
+    <form method="post" action="{{ url_for('simular_lectura', id_sensor=s.id_sensor) }}" style="margin-top:10px">
+      <button class="btn sm" type="submit">Simular lectura</button>
+    </form>
+  </div>
+  {% endfor %}
+</div>
+<div class="card">
+  <h2>Historial reciente de lecturas</h2>
+  <table>
+    <tr><th>Fecha</th><th>Sensor</th><th>Tipo</th><th>Valor</th><th>Alerta</th></tr>
+    {% for l in historial %}
+    <tr><td>{{ l.fecha_hora_lectura }}</td><td>{{ l.codigo_serie }}</td><td>{{ l.tipo_sensor }}</td>
+        <td>{{ l.valor_medido }} {{ l.unidad_medida }}</td><td>{{ '⚠ Sí' if l.alerta_umbral_critico else 'No' }}</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

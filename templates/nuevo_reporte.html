@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Registrar nueva incidencia</h1>
+<form method="post" class="grid two">
+  <div class="card">
+    <h2>Datos del ciudadano</h2>
+    <label>Documento de identidad</label>
+    <input name="documento" value="{{ form.get('documento','') }}" required>
+    <label>Nombre completo</label>
+    <input name="nombre" value="{{ form.get('nombre','') }}" required>
+    <label>Correo electrónico</label>
+    <input type="email" name="correo" value="{{ form.get('correo','') }}" required>
+    <label>Teléfono (opcional)</label>
+    <input name="telefono" value="{{ form.get('telefono','') }}">
+    <h2 style="margin-top:20px">Incidencia</h2>
+    <label>Zona urbana</label>
+    <select name="id_zona" id="zona">
+      {% for z in zonas %}<option value="{{ z.id_zona }}" data-lat="{{ z.lat_centro }}" data-lng="{{ z.lng_centro }}">{{ z.nombre_zona }}</option>{% endfor %}
+    </select>
+    <label>Categoría</label>
+    <select name="id_categoria">
+      {% for c in categorias %}<option value="{{ c.id_categoria }}">{{ c.nombre_categoria }} (SLA {{ c.sla_horas_respuesta }} h)</option>{% endfor %}
+    </select>
+    <label>Descripción</label>
+    <textarea name="descripcion" rows="3" required>{{ form.get('descripcion','') }}</textarea>
+    <label>URL de foto (opcional)</label>
+    <input name="foto" value="{{ form.get('foto','') }}">
+  </div>
+  <div class="card">
+    <h2>Ubicación</h2>
+    <p class="muted">Haz clic en el mapa para marcar el punto exacto.</p>
+    <div id="map"></div>
+    <input type="hidden" name="latitud" id="lat" value="{{ form.get('latitud','') }}">
+    <input type="hidden" name="longitud" id="lng" value="{{ form.get('longitud','') }}">
+    <p class="muted" id="coords">Sin ubicación seleccionada.</p>
+    <button class="btn" type="submit">Guardar reporte</button>
+  </div>
+</form>
+{% endblock %}
+{% block scripts %}
+<script>
+  const map = L.map('map').setView([7.1155, -73.1185], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; OpenStreetMap'}).addTo(map);
+  let marker = null;
+  function poner(lat, lng) {
+    if (marker) map.removeLayer(marker);
+    marker = L.marker([lat, lng]).addTo(map);
+    document.getElementById('lat').value = lat.toFixed(6);
+    document.getElementById('lng').value = lng.toFixed(6);
+    document.getElementById('coords').innerText = `Lat ${lat.toFixed(5)}, Lng ${lng.toFixed(5)}`;
+  }
+  map.on('click', e => poner(e.latlng.lat, e.latlng.lng));
+  document.getElementById('zona').addEventListener('change', e => {
+    const o = e.target.selectedOptions[0];
+    map.setView([+o.dataset.lat, +o.dataset.lng], 15);
+    poner(+o.dataset.lat, +o.dataset.lng);
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Reporte #{{ r.id_reporte }}
+  <span class="badge b-{{ r.estado_actual|replace(' ','-') }}">{{ r.estado_actual }}</span></h1>
+<div class="grid two">
+  <div class="card">
+    <h2>{{ r.nombre_categoria }}</h2>
+    <p>{{ r.descripcion_problema }}</p>
+    <p class="muted">Zona: {{ r.nombre_zona }} · Reportado por {{ r.nombre_completo }} · {{ r.fecha_hora_reporte }}<br>
+      Criticidad: {{ r.nivel_criticidad }} · SLA: {{ r.sla_horas_respuesta }} horas<br>
+      Coordenadas: {{ r.latitud }}, {{ r.longitud }}
+      {% if r.url_evidencia_foto %}· <a href="{{ r.url_evidencia_foto }}" target="_blank">Ver foto</a>{% endif %}</p>
+    <div id="map" style="height:260px"></div>
+  </div>
+  <div>
+    {% if r.estado_actual != 'Resuelto' %}
+    <div class="card">
+      <h2>Asignar cuadrilla</h2>
+      {% if cuadrillas %}
+      <form method="post" action="{{ url_for('asignar', id_reporte=r.id_reporte) }}">
+        <label>Cuadrilla disponible</label>
+        <select name="id_cuadrilla">
+          {% for q in cuadrillas %}<option value="{{ q.id_cuadrilla }}">{{ q.nombre_cuadrilla }} - {{ q.especialidad_tecnica }}</option>{% endfor %}
+        </select>
+        <label>Diagnóstico inicial</label>
+        <textarea name="diagnostico" rows="2"></textarea>
+        <br><br><button class="btn" type="submit">Asignar</button>
+      </form>
+      {% else %}<p class="muted">No hay cuadrillas disponibles en este momento.</p>{% endif %}
+    </div>
+    {% endif %}
+    <div class="card">
+      <h2>Intervenciones</h2>
+      {% for i in intervenciones %}
+        <div style="border-bottom:1px solid #e5e9f0; padding:8px 0">
+          <b>{{ i.nombre_cuadrilla }}</b> ({{ i.especialidad_tecnica }})<br>
+          <span class="muted">Asignada: {{ i.fecha_asignacion }} · {{ i.resultado_intervencion }}
+          {% if i.fecha_cierre %}· Cierre: {{ i.fecha_cierre }}{% endif %}<br>
+          {{ i.diagnostico_tecnico or 'Sin diagnóstico' }} · Costo: ${{ '{:,.0f}'.format(i.costo_operativo) }}</span>
+          {% if not i.fecha_cierre %}
+          <form method="post" action="{{ url_for('cerrar', id_intervencion=i.id_intervencion) }}" class="row" style="margin-top:6px">
+            <input name="costo" type="number" min="0" placeholder="Costo final" style="width:130px">
+            <button class="btn sm" type="submit">Cerrar intervención</button>
+          </form>
+          {% endif %}
+        </div>
+      {% else %}<p class="muted">Aún no hay intervenciones.</p>{% endfor %}
+    </div>
+  </div>
+</div>
+<a class="btn sec" href="{{ url_for('reportes') }}">← Volver</a>
+{% endblock %}
+{% block scripts %}
+<script>
+  const map = L.map('map').setView([{{ r.latitud }}, {{ r.longitud }}], 16);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; OpenStreetMap'}).addTo(map);
+  L.marker([{{ r.latitud }}, {{ r.longitud }}]).addTo(map);
+</script>
+{% endblock %}
