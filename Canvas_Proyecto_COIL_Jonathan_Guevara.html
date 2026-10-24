@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Canvas del proyecto COIL - Jonathan Alexis Guevara Basto</title>
+<style>
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 10.5pt;
+    color: #1a1a1a;
+    line-height: 1.4;
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 10px 25px;
+  }
+  .top-header {
+    font-size: 9pt;
+    color: #444;
+    border-bottom: 1.5px solid #888;
+    padding-bottom: 4px;
+    margin-bottom: 18px;
+  }
+  .top-header strong { color: #002b5c; }
+  .subtitle-tag {
+    color: #0070c0;
+    font-weight: bold;
+    font-size: 9.5pt;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  h1 {
+    color: #003366;
+    font-size: 20pt;
+    margin: 0 0 8px 0;
+  }
+  .intro-text {
+    font-size: 10pt;
+    color: #333;
+    margin-bottom: 16px;
+  }
+  h2.section-label {
+    color: #003366;
+    font-size: 12pt;
+    margin: 16px 0 6px 0;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 14px;
+  }
+  th, td {
+    border: 1px solid #99b3cc;
+    padding: 8px 10px;
+    vertical-align: top;
+    text-align: left;
+    font-size: 10pt;
+  }
+  .bg-light {
+    background-color: #ebf2fa;
+    color: #002b5c;
+    font-weight: bold;
+  }
+  .bg-navy {
+    background-color: #003366;
+    color: #ffffff;
+    font-weight: bold;
+  }
+  .bg-navy-header {
+    background-color: #003366;
+    color: #ffffff;
+    padding: 8px 12px;
+  }
+  .bg-navy-header .title {
+    font-size: 11.5pt;
+    font-weight: bold;
+    display: block;
+  }
+  .bg-navy-header .desc {
+    font-size: 9pt;
+    font-style: italic;
+    font-weight: normal;
+    color: #d9e6f2;
+  }
+  .role-sub {
+    display: block;
+    font-size: 8.5pt;
+    font-weight: normal;
+    font-style: italic;
+    color: #4a607a;
+    margin-top: 2px;
+  }
+  .hint {
+    font-size: 8.5pt;
+    font-style: italic;
+    color: #555;
+    margin-top: -8px;
+    margin-bottom: 14px;
+  }
+  .page-break {
+    page-break-before: always;
+    margin-top: 28px;
+  }
+  @media print {
+    body { margin: 0; padding: 10px; }
+    .bg-light, .bg-navy, .bg-navy-header {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <!-- PÁGINA 1 -->
+  <div class="top-header">
+    <strong>UTS – UCC – UNIPAMPLONA - UCOLIMA</strong> &nbsp;|&nbsp; Metodología COIL · Actividad “Alianza COIL”
+  </div>
+
+  <div class="subtitle-tag">ACTIVIDAD “ALIANZA COIL”</div>
+  <h1>Canvas del proyecto COIL</h1>
+  <p class="intro-text">Plantilla de trabajo para ser diligenciada en conjunto por los dos equipos de la alianza. Este lienzo es el producto principal de la actividad y sirve de base para el pitch de 3 minutos.</p>
+
+  <h2 class="section-label">Datos de la alianza</h2>
+  <table>
+    <tr>
+      <td class="bg-light" style="width:18%;">Alianza N.°</td>
+      <td style="width:32%;">Individual (UTS)</td>
+      <td class="bg-light" style="width:18%;">Fecha</td>
+      <td style="width:32%;">24 de octubre de 2026</td>
+    </tr>
+    <tr>
+      <td class="bg-light">País Equipo A</td>
+      <td>Colombia</td>
+      <td class="bg-light">País Equipo B</td>
+      <td></td>
+    </tr>
+  </table>
+
+  <h2 class="section-label">Integrantes y roles</h2>
+  <table>
+    <tr class="bg-navy">
+      <th style="width:28%; text-align:center;">Rol</th>
+      <th style="width:36%; text-align:center;">Integrante Equipo A</th>
+      <th style="width:36%; text-align:center;">Integrante Equipo B</th>
+    </tr>
+    <tr>
+      <td class="bg-light">Docente líder<span class="role-sub">Coordina el diseño y vela por el resultado de aprendizaje</span></td>
+      <td><strong>Ricardo Andrés Medina Puentes</strong></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td class="bg-light">Gestor de tiempo<span class="role-sub">Controla los tiempos de cada paso</span></td>
+      <td><strong>Jonathan Alexis Guevara Basto</strong></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td class="bg-light">Responsable digital<span class="role-sub">Propone y administra las herramientas</span></td>
+      <td><strong>Jonathan Alexis Guevara Basto</strong></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td class="bg-light">Relator<span class="role-sub">Registra los acuerdos en el canvas</span></td>
+      <td><strong>Jonathan Alexis Guevara Basto</strong></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td class="bg-light">Vocero<span class="role-sub">Presenta el pitch de la alianza</span></td>
+      <td><strong>Jonathan Alexis Guevara Basto</strong></td>
+      <td></td>
+    </tr>
+  </table>
+
+  <h2 class="section-label">Reto seleccionado (marque uno)</h2>
+  <table>
+    <tr>
+      <td style="width:33%;">☐ Seguridad alimentaria (ODS 2)</td>
+      <td style="width:33%;">☐ Gestión del agua (ODS 6)</td>
+      <td style="width:34%; background-color:#ebf2fa; font-weight:bold; color:#003366;">☑ Ciudades inteligentes (ODS 11)</td>
+    </tr>
+    <tr>
+      <td>☐ IA responsable (ODS 10)</td>
+      <td>☐ Economía circular (ODS 12)</td>
+      <td>☐ Salud y bienestar (ODS 3)</td>
+    </tr>
+  </table>
+
+  <table>
+    <tr>
+      <td class="bg-navy-header">
+        <span class="title">1. Nombre del proyecto</span>
+        <span class="desc">Título atractivo y claro que comunique el propósito del proyecto.</span>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:12px;">
+        <strong>SmartCity DataHub:</strong> Sistema Integrado de Base de Datos Relacional y Aplicación Web para el Monitoreo de Incidencias Viales, Movilidad y Calidad Ambiental Urbana en Bucaramanga.
+      </td>
+    </tr>
+  </table>
+  <p class="hint">Sugerencia: combine un nombre corto y memorable con un subtítulo descriptivo.</p>
+
+  <!-- PÁGINA 2 -->
+  <div class="page-break"></div>
+  <div class="top-header">
+    <strong>UTS – UCC – UNIPAMPLONA - UCOLIMA</strong> &nbsp;|&nbsp; Metodología COIL · Actividad “Alianza COIL”
+  </div>
+
+  <table>
+    <tr>
+      <td colspan="4" class="bg-navy-header">
+        <span class="title">2. Instituciones socias</span>
+        <span class="desc">Universidades, países y cursos involucrados.</span>
+      </td>
+    </tr>
+    <tr class="bg-navy">
+      <th style="width:28%; text-align:center;">Institución</th>
+      <th style="width:16%; text-align:center;">País</th>
+      <th style="width:30%; text-align:center;">Curso / asignatura</th>
+      <th style="width:26%; text-align:center;">Docente responsable</th>
+    </tr>
+    <tr>
+      <td><strong>Equipo A:</strong><br>Unidades Tecnológicas de Santander (UTS)</td>
+      <td>Colombia</td>
+      <td>Bases de Datos / Modelado de Datos<br><em>(8.° semestre)</em></td>
+      <td>Ricardo Andrés Medina Puentes</td>
+    </tr>
+    <tr>
+      <td><strong>Equipo B:</strong></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </table>
+  <p class="hint">Indiquen también el semestre o nivel de los estudiantes y el idioma de trabajo acordado.</p>
+  <table>
+    <tr>
+      <td style="padding:8px 10px;"><strong>Idioma de trabajo:</strong> Español &nbsp;|&nbsp; <strong>Nivel académico:</strong> 8.° Semestre</td>
+    </tr>
+  </table>
+
+  <table>
+    <tr>
+      <td colspan="2" class="bg-navy-header">
+        <span class="title">3. Reto / problema común</span>
+        <span class="desc">¿Qué problema comparten ambos contextos?</span>
+      </td>
+    </tr>
+    <tr class="bg-navy">
+      <th style="width:50%; text-align:center;">¿Cómo se manifiesta en el país del Equipo A? (Colombia)</th>
+      <th style="width:50%; text-align:center;">¿Cómo se manifiesta en el país del Equipo B?</th>
+    </tr>
+    <tr>
+      <td>
+        En ciudades intermedias de Colombia como <strong>Bucaramanga y su Área Metropolitana (Santander)</strong>, los datos sobre reportes ciudadanos de daños viales (huecos, hundimientos), fallas en la red semafórica y alertas de contaminación del aire se gestionan de forma <strong>fragmentada en hojas de cálculo aisladas, redes sociales y líneas telefónicas</strong> sin normalización.<br><br>
+        <strong>Dato / Evidencia en Colombia:</strong> Según reportes del DANE y observatorios de movilidad metropolitana en Santander, más del <strong>62 % de los reportes e incidencias urbanas</strong> superan los 15 días hábiles de atención debido a registros duplicados, falta de georreferenciación estandarizada y ausencia de una base de datos relacional que conecte los reportes con las cuadrillas operativas y sensores IoT.
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td colspan="2" class="bg-navy">Problema común (redacción final)</td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        Las administraciones municipales en Colombia enfrentan una <strong>deficiente gestión y manipulación de datos urbanos</strong>: la información generada por la ciudadanía (reportes de daños en infraestructura vial y movilidad), los sensores IoT (tráfico y calidad del aire) y las cuadrillas de mantenimiento se almacena en archivos aislados y sin integridad referencial. Esto ocasiona duplicidad de información, pérdida de historial técnico, demoras críticas en los tiempos de respuesta (SLA) e imposibilidad de tomar decisiones basadas en datos para consolidar <strong>Ciudades y Comunidades Sostenibles (ODS 11)</strong>.
+      </td>
+    </tr>
+  </table>
+  <p class="hint">Incluyan al menos un dato o evidencia que sustente la relevancia del problema en cada país.</p>
+
+  <!-- PÁGINA 3 -->
+  <div class="page-break"></div>
+  <div class="top-header">
+    <strong>UTS – UCC – UNIPAMPLONA - UCOLIMA</strong> &nbsp;|&nbsp; Metodología COIL · Actividad “Alianza COIL”
+  </div>
+
+  <table>
+    <tr>
+      <td colspan="3" class="bg-navy-header">
+        <span class="title">4. Resultado de aprendizaje</span>
+        <span class="desc">¿Qué aprenderán los estudiantes? (verbo + contenido + contexto)</span>
+      </td>
+    </tr>
+    <tr class="bg-navy">
+      <th style="width:25%; text-align:center;">Verbo (acción observable)</th>
+      <th style="width:40%; text-align:center;">Contenido (qué)</th>
+      <th style="width:35%; text-align:center;">Contexto (para qué / dónde)</th>
+    </tr>
+    <tr>
+      <td style="font-style:italic; color:#555;">Ej.: Diseñar</td>
+      <td style="font-style:italic; color:#555;">Ej.: un prototipo de app de comercialización agroecológica</td>
+      <td style="font-style:italic; color:#555;">Ej.: en equipos multiculturales, comparando dos contextos urbanos</td>
+    </tr>
+    <tr>
+      <td><strong>Diseñar, normalizar e implementar</strong></td>
+      <td>Un <strong>Modelo Entidad-Relación (MER)</strong> en 3FN y una aplicación web conectada a base de datos relacional para la gestión de incidencias urbanas y sensores IoT</td>
+      <td>Aplicando estándares de integridad referencial en el entorno urbano de Bucaramanga (Colombia) bajo el marco del <strong>ODS 11 (Ciudades Inteligentes)</strong>.</td>
+    </tr>
+    <tr>
+      <td colspan="3" class="bg-navy">Redacción del resultado de aprendizaje</td>
+    </tr>
+    <tr>
+      <td colspan="3">
+        <strong>Diseñar, normalizar e implementar</strong> un Modelo Entidad-Relación (MER) conceptual y lógico de base de datos relacional (definición de 9 entidades, atributos, llaves primarias PK, llaves foráneas FK y cardinalidades en 3FN) integrado en una aplicación web funcional con mapas y telemetría IoT en tiempo real, respondiendo a la problemática de fragmentación de datos urbanos en Colombia bajo el marco del ODS 11 (Ciudades Inteligentes).
+      </td>
+    </tr>
+  </table>
+
+  <table>
+    <tr>
+      <td colspan="3" class="bg-navy-header">
+        <span class="title">5. Producto final</span>
+        <span class="desc">Prototipo, informe, video, app, póster…</span>
+      </td>
+    </tr>
+    <tr>
+      <td style="width:33%; background-color:#ebf2fa; font-weight:bold; color:#003366;">☑ Prototipo (Modelo MER BD)</td>
+      <td style="width:33%; background-color:#ebf2fa; font-weight:bold; color:#003366;">☑ Póster / infografía</td>
+      <td style="width:34%; background-color:#ebf2fa; font-weight:bold; color:#003366;">☑ Video (Pitch máx. 2 min)</td>
+    </tr>
+    <tr>
+      <td style="background-color:#ebf2fa; font-weight:bold; color:#003366;">☑ Aplicación / software</td>
+      <td></td>
+      <td></td>
+    </tr>
+  </table>
+
+  <h2 class="section-label" style="font-size:10.5pt;">Descripción del producto, cronograma y enlaces de entrega</h2>
+  <table>
+    <tr>
+      <td>
+        <strong>1. Descripción de la solución y aporte técnico (Jonathan Alexis Guevara Basto – UTS):</strong><br>
+        • <strong>Base de Datos Relacional (MER en 3FN):</strong> Diseño e implementación de 9 entidades interconectadas (<code>CIUDAD</code>, <code>ZONA_URBANA</code>, <code>CIUDADANO</code>, <code>CATEGORIA_INCIDENCIA</code>, <code>REPORTE_INCIDENCIA</code>, <code>SENSOR_IOT</code>, <code>LECTURA_SENSOR</code>, <code>CUADRILLA_OPERATIVA</code> e <code>INTERVENCION_MANTENIMIENTO</code>).<br>
+        • <strong>Aplicación Web Funcional (Flask + SQLite + Leaflet + API Open-Meteo):</strong> Software desplegado en internet con Portal Urbano Público (Index), autenticación y separación de roles (<code>Ciudadano</code> y <code>Administrador</code>), 3 módulos CRUD completos (Reportes, Cuadrillas y Usuarios), mapa multicapa de Bucaramanga, sensores IoT conectados en vivo a la API de Open-Meteo e inspector SQL del MER en tiempo real.<br><br>
+        <strong>2. Cronograma de Trabajo (4 Sesiones):</strong>
+        <ul style="margin:4px 0 10px 18px; padding:0;">
+          <li><strong>Sesión 1 (Semana 1):</strong> Identificación del reto ODS 11 y diagnóstico de la problemática de datos urbanos en Bucaramanga, Colombia.</li>
+          <li><strong>Sesión 2 (Semana 2):</strong> Definición de reglas de negocio, requerimientos de datos, roles del sistema y formulación del Resultado de Aprendizaje.</li>
+          <li><strong>Sesión 3 (Semana 3):</strong> Diseño del Modelo Entidad-Relación (MER) conceptual y lógico (3FN) y desarrollo del software web.</li>
+          <li><strong>Sesión 4 (Semana 4):</strong> Publicación del código en GitHub, despliegue en Render, elaboración de la Infografía, grabación del Video Pitch (máx. 2 min) y entrega final.</li>
+        </ul>
+        <strong>3. Enlaces directos en la nube (Permisos públicos habilitados):</strong><br>
+        • <strong>Repositorio GitHub (Código Fuente y MER):</strong> <a href="https://github.com/ryoka0123/smartcity-datahub">https://github.com/ryoka0123/smartcity-datahub</a><br>
+        • <strong>Aplicación Web en Vivo (Render):</strong> <span style="color:#0052cc; text-decoration:underline;">[PEGAR AQUÍ TU ENLACE DE RENDER]</span><br>
+        • <strong>Enlace a la Infografía del Proyecto:</strong> <span style="color:#0052cc; text-decoration:underline;">[PEGAR AQUÍ TU ENLACE DE GOOGLE DRIVE / ONEDRIVE A LA INFOGRAFÍA]</span><br>
+        • <strong>Enlace al Video Pitch (máx. 2 min):</strong> <span style="color:#0052cc; text-decoration:underline;">[PEGAR AQUÍ TU ENLACE DE GOOGLE DRIVE / ONEDRIVE AL VIDEO PITCH]</span>
+      </td>
+    </tr>
+  </table>
+
+  <!-- PÁGINA 4 -->
+  <div class="page-break"></div>
+  <div class="top-header">
+    <strong>UTS – UCC – UNIPAMPLONA - UCOLIMA</strong> &nbsp;|&nbsp; Metodología COIL · Actividad “Alianza COIL”
+  </div>
+
+  <table>
+    <tr>
+      <td colspan="3" class="bg-navy-header">
+        <span class="title">6. Herramientas digitales</span>
+        <span class="desc">Comunicación, co-creación y entrega.</span>
+      </td>
+    </tr>
+    <tr class="bg-navy">
+      <th style="width:26%; text-align:center;">Propósito</th>
+      <th style="width:26%; text-align:center;">Herramienta</th>
+      <th style="width:48%; text-align:center;">¿Por qué la eligieron?</th>
+    </tr>
+    <tr>
+      <td class="bg-light">Comunicación sincrónica</td>
+      <td><strong>Microsoft Teams</strong></td>
+      <td>Es la plataforma institucional oficial donde se desarrollaron y grabaron las 4 sesiones sincrónicas del curso.</td>
+    </tr>
+    <tr>
+      <td class="bg-light">Comunicación asincrónica</td>
+      <td><strong>Chat de MS Teams y Correo Institucional UTS</strong></td>
+      <td>Permite el seguimiento de instrucciones, revisión de avances y comunicación directa con el docente líder.</td>
+    </tr>
+    <tr>
+      <td class="bg-light">Co-creación</td>
+      <td><strong>Python (Flask), SQLite, Leaflet.js, Draw.io y Canva</strong></td>
+      <td>Tecnologías gratuitas y de código abierto utilizadas para implementar la base de datos relacional (3FN), la aplicación web con mapas y sensores en vivo (API Open-Meteo), el diagrama MER y la infografía.</td>
+    </tr>
+    <tr>
+      <td class="bg-light">Gestión de archivos</td>
+      <td><strong>GitHub, Render.com y OneDrive / Google Drive</strong></td>
+      <td>GitHub para el repositorio público del código fuente, Render para el despliegue web gratuito en la nube y Drive/OneDrive para alojar la infografía y el video pitch con permisos abiertos.</td>
+    </tr>
+    <tr>
+      <td class="bg-light">Entrega y socialización</td>
+      <td><strong>Microsoft Teams (Módulo de Tareas) y Canva Video</strong></td>
+      <td>Facilita la grabación dinámica del pitch de 2 minutos demostrando el software en vivo y la entrega unificada bajo la rúbrica oficial.</td>
+    </tr>
+  </table>
+  <p class="hint">Prefieran herramientas gratuitas y accesibles para ambas instituciones.</p>
+
+</body>
+</html>
