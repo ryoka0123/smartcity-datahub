@@ -1,14 +1,90 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Cuadrillas operativas</h1>
-<div class="card">
-  <table>
-    <tr><th>Cuadrilla</th><th>Especialidad</th><th>Responsable</th><th>Teléfono</th><th>Intervenciones</th><th>Costo acumulado</th><th>Estado</th></tr>
-    {% for q in cuadrillas %}
-    <tr><td>{{ q.nombre_cuadrilla }}</td><td>{{ q.especialidad_tecnica }}</td><td>{{ q.responsable_turno }}</td>
-        <td>{{ q.telefono_emergencia }}</td><td>{{ q.total }}</td><td>${{ '{:,.0f}'.format(q.costo) }}</td>
-        <td><span class="badge {{ 'b-Resuelto' if q.disponible else 'b-En-Atención' }}">{{ 'Disponible' if q.disponible else 'En servicio' }}</span></td></tr>
-    {% endfor %}
-  </table>
+<h1>Gestión de Cuadrillas Operativas (CRUD: <code>CUADRILLA_OPERATIVA</code>)</h1>
+<div class="grid two">
+  <div class="card">
+    <h2>Listado de cuadrillas</h2>
+    <table>
+      <tr>
+        <th>ID</th>
+        <th>Cuadrilla</th>
+        <th>Especialidad</th>
+        <th>Responsable</th>
+        <th>Intervenciones</th>
+        <th>Costo acum.</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+      {% for q in cuadrillas %}
+      <tr>
+        <td>{{ q.id_cuadrilla }}</td>
+        <td>{{ q.nombre_cuadrilla }}</td>
+        <td>{{ q.especialidad_tecnica }}</td>
+        <td>{{ q.responsable_turno }}<br><span class="muted">{{ q.telefono_emergencia }}</span></td>
+        <td>{{ q.total }}</td>
+        <td>${{ '{:,.0f}'.format(q.costo) }}</td>
+        <td>
+          <span class="badge {{ 'b-Resuelto' if q.disponible else 'b-En-Atención' }}">
+            {{ 'Disponible' if q.disponible else 'En servicio' }}
+          </span>
+        </td>
+        <td class="row" style="gap:6px">
+          <a class="btn sm" href="{{ url_for('editar_cuadrilla', id_cuadrilla=q.id_cuadrilla) }}">Editar</a>
+          <form method="post" action="{{ url_for('eliminar_cuadrilla', id_cuadrilla=q.id_cuadrilla) }}" onsubmit="return confirm('¿Eliminar esta cuadrilla?');">
+            <button class="btn sm sec" type="submit" style="background:#dc2626">Eliminar</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <div class="card">
+    {% if editar %}
+      <h2>✏️ Editar cuadrilla #{{ editar.id_cuadrilla }}</h2>
+      <form method="post" action="{{ url_for('editar_cuadrilla', id_cuadrilla=editar.id_cuadrilla) }}">
+        <label>Nombre de la cuadrilla</label>
+        <input name="nombre_cuadrilla" value="{{ editar.nombre_cuadrilla }}" required>
+
+        <label>Especialidad técnica</label>
+        <input name="especialidad_tecnica" value="{{ editar.especialidad_tecnica }}" required>
+
+        <label>Responsable de turno</label>
+        <input name="responsable_turno" value="{{ editar.responsable_turno }}" required>
+
+        <label>Teléfono de emergencia</label>
+        <input name="telefono_emergencia" value="{{ editar.telefono_emergencia or '' }}">
+
+        <label>Disponibilidad</label>
+        <select name="disponible">
+          <option value="1" {{ 'selected' if editar.disponible==1 }}>Disponible</option>
+          <option value="0" {{ 'selected' if editar.disponible==0 }}>En servicio (Ocupada)</option>
+        </select>
+
+        <div class="row" style="margin-top:16px">
+          <button class="btn" type="submit">Guardar cambios</button>
+          <a class="btn sec" href="{{ url_for('cuadrillas') }}">Cancelar</a>
+        </div>
+      </form>
+    {% else %}
+      <h2>➕ Registrar nueva cuadrilla</h2>
+      <form method="post" action="{{ url_for('cuadrillas') }}">
+        <label>Nombre de la cuadrilla</label>
+        <input name="nombre_cuadrilla" placeholder="Ej. Cuadrilla Vial #4" required>
+
+        <label>Especialidad técnica</label>
+        <input name="especialidad_tecnica" placeholder="Ej. Bacheo y pavimentación" required>
+
+        <label>Responsable de turno</label>
+        <input name="responsable_turno" placeholder="Nombre del ingeniero o técnico" required>
+
+        <label>Teléfono de emergencia</label>
+        <input name="telefono_emergencia" placeholder="3201234567">
+
+        <br><br>
+        <button class="btn" type="submit">Crear cuadrilla</button>
+      </form>
+    {% endif %}
+  </div>
 </div>
 {% endblock %}

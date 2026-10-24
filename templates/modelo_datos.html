@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Modelo Entidad-Relación (MER) y Diccionario de Datos en Vivo</h1>
+<p class="muted" style="margin-bottom:16px">
+  Arquitectura relacional en <b>Tercera Forma Normal (3FN)</b> con 9 entidades conectadas a <code>smartcity.db</code>.
+  Los conteos y registros mostrados abajo se consultan en tiempo real desde el motor SQLite.
+</p>
+
+<!-- CONTEO EN VIVO POR CADA ENTIDAD DEL MER -->
+<div class="grid" style="grid-template-columns:repeat(3,1fr); margin-bottom:18px">
+  {% for t in esquema %}
+  <a href="{{ url_for('modelo_datos', tabla=t.nombre) }}#inspector" style="text-decoration:none; color:inherit">
+    <div class="kpi" style="{{ 'border-left-color:#f59e0b; background:#fffbeb' if t.nombre == tabla_activa }}">
+      <div class="row" style="justify-content:space-between">
+        <span style="font-weight:700; color:#003366; font-size:13px">{{ loop.index }}. {{ t.nombre|upper }}</span>
+        <span class="badge b-Resuelto">{{ t.total }} reg.</span>
+      </div>
+      <span style="display:block; margin-top:4px">{{ t.descripcion }}</span>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+
+<!-- INSPECTOR DE REGISTROS SQL EN VIVO -->
+<div class="card" id="inspector">
+  <div class="row" style="justify-content:space-between; margin-bottom:10px">
+    <h2 style="margin:0">🔍 Vista previa de registros en vivo · Tabla: <code>{{ tabla_activa }}</code></h2>
+    <span class="muted">Haz clic en cualquiera de las 9 tarjetas de arriba para inspeccionar sus filas reales</span>
+  </div>
+  {% if filas_muestra %}
+  <div style="overflow-x:auto">
+    <table>
+      <tr>
+        {% for col in columnas_muestra %}<th>{{ col }}</th>{% endfor %}
+      </tr>
+      {% for fila in filas_muestra %}
+      <tr>
+        {% for col in columnas_muestra %}<td>{{ fila[col] if fila[col] is not none else 'NULL' }}</td>{% endfor %}
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+  {% else %}
+  <p class="muted">La tabla no tiene registros todavía.</p>
+  {% endif %}
+</div>
+
+<!-- DIAGRAMA ENTIDAD-RELACIÓN (CROW'S FOOT) -->
+<div class="card">
+  <h2>📐 Diagrama Entidad-Relación (Notación Pata de Gallo / Crow's Foot)</h2>
+  <pre class="mermaid" style="background:#f8fafc; padding:12px; border-radius:8px; overflow-x:auto">
+erDiagram
+    CIUDAD ||--o{ ZONA_URBANA : "1:N divide"
+    ZONA_URBANA ||--o{ REPORTE_INCIDENCIA : "1:N ubica"
+    ZONA_URBANA ||--o{ SENSOR_IOT : "1:N instala"
+    CIUDADANO ||--o{ REPORTE_INCIDENCIA : "1:N registra"
+    CATEGORIA_INCIDENCIA ||--o{ REPORTE_INCIDENCIA : "1:N clasifica"
+    SENSOR_IOT ||--o{ LECTURA_SENSOR : "1:N mide"
+    REPORTE_INCIDENCIA ||--o{ INTERVENCION_MANTENIMIENTO : "1:N atiende"
+    CUADRILLA_OPERATIVA ||--o{ INTERVENCION_MANTENIMIENTO : "1:N ejecuta"
+  </pre>
+</div>
+
+<!-- DICCIONARIO DE DATOS DETALLADO (9 TABLAS) -->
+<div class="card">
+  <h2>📋 Diccionario de Datos (Llaves Primarias PK, Foráneas FK y Tipos)</h2>
+  <div class="grid" style="grid-template-columns:repeat(2,1fr)">
+    {% for t in esquema %}
+    <div style="border:1px solid #dbe3ec; border-radius:8px; padding:12px">
+      <div class="row" style="justify-content:space-between; margin-bottom:6px">
+        <strong style="color:#003366">{{ loop.index }}. {{ t.nombre|upper }}</strong>
+        <span class="muted">{{ t.total }} filas</span>
+      </div>
+      <p class="muted" style="margin:0 0 8px 0">{{ t.descripcion }}</p>
+      <table>
+        <tr><th>Columna</th><th>Tipo</th><th>Restricción / Clave</th></tr>
+        {% for c in t.columnas %}
+        <tr>
+          <td><code>{{ c.nombre }}</code></td>
+          <td>{{ c.tipo }}</td>
+          <td>
+            {% if c.pk %}<span class="badge" style="background:#dbeafe; color:#1e40af">🔑 PK</span>{% endif %}
+            {% if c.fk %}<span class="badge" style="background:#fce7f3; color:#9d174d">🔗 FK ➔ {{ c.fk }}</span>{% endif %}
+            {% if not c.pk and not c.fk and c.notnull %}<span class="muted">NOT NULL</span>{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true, theme: 'default' });
+</script>
+{% endblock %}

@@ -14,7 +14,10 @@
   <div class="card" style="{{ 'border-color:#dc2626' if s.alerta }}">
     <h2>{{ s.codigo_serie }}</h2>
     <div class="muted">{{ s.tipo_sensor }} · {{ s.nombre_zona }}</div>
-    <div class="muted" style="font-size:11px">GPS: {{ s.latitud }}, {{ s.longitud }}</div>
+    <div class="muted" style="font-size:11px">
+      GPS: {{ s.latitud }}, {{ s.longitud }} ·
+      <a href="https://air-quality-api.open-meteo.com/v1/air-quality?latitude={{ s.latitud }}&longitude={{ s.longitud }}&current=pm2_5,pm10,carbon_monoxide" target="_blank" style="color:#0070c0">Ver JSON oficial en vivo ↗</a>
+    </div>
     <p style="font-size:28px; margin:10px 0; color:{{ '#dc2626' if s.alerta else '#003366' }}">
       {{ s.ultimo_valor if s.ultimo_valor is not none else '—' }} <small style="font-size:14px">{{ s.unidad or '' }}</small></p>
     <div class="muted">{{ '⚠ Alerta de umbral crítico' if s.alerta else '✓ Valor dentro del rango normal' }}<br>{{ s.fecha or '' }}</div>

@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Gestión de Usuarios / Ciudadanos (CRUD: <code>CIUDADANO</code>)</h1>
+<div class="grid two">
+  <!-- LISTADO (READ / DELETE) -->
+  <div class="card">
+    <h2>Usuarios registrados ({{ usuarios|length }})</h2>
+    <table>
+      <tr>
+        <th>ID</th>
+        <th>Documento</th>
+        <th>Nombre</th>
+        <th>Correo</th>
+        <th>Rol</th>
+        <th>Reportes</th>
+        <th>Acciones</th>
+      </tr>
+      {% for u in usuarios %}
+      <tr>
+        <td>{{ u.id_ciudadano }}</td>
+        <td>{{ u.documento_identidad }}</td>
+        <td>{{ u.nombre_completo }}</td>
+        <td>{{ u.correo_electronico }}</td>
+        <td>
+          <span class="badge {{ 'b-En-Atención' if u.rol=='Administrador' else 'b-Resuelto' }}">{{ u.rol }}</span>
+        </td>
+        <td>{{ u.total_reportes }}</td>
+        <td class="row" style="gap:6px">
+          <a class="btn sm" href="{{ url_for('editar_usuario', id_ciudadano=u.id_ciudadano) }}">Editar</a>
+          <form method="post" action="{{ url_for('eliminar_usuario', id_ciudadano=u.id_ciudadano) }}" onsubmit="return confirm('¿Eliminar este usuario?');">
+            <button class="btn sm sec" type="submit" style="background:#dc2626">Eliminar</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <!-- FORMULARIO (CREATE / UPDATE) -->
+  <div class="card">
+    {% if editar %}
+      <h2>✏️ Editar usuario #{{ editar.id_ciudadano }}</h2>
+      <form method="post" action="{{ url_for('editar_usuario', id_ciudadano=editar.id_ciudadano) }}">
+        <label>Documento de identidad</label>
+        <input value="{{ editar.documento_identidad }}" disabled>
+
+        <label>Nombre completo</label>
+        <input name="nombre" value="{{ editar.nombre_completo }}" required>
+
+        <label>Correo electrónico</label>
+        <input type="email" name="correo" value="{{ editar.correo_electronico }}" required>
+
+        <label>Teléfono</label>
+        <input name="telefono" value="{{ editar.telefono_contacto or '' }}">
+
+        <label>Rol</label>
+        <select name="rol">
+          <option value="Ciudadano" {{ 'selected' if editar.rol=='Ciudadano' }}>Ciudadano</option>
+          <option value="Administrador" {{ 'selected' if editar.rol=='Administrador' }}>Administrador</option>
+        </select>
+
+        <label>Nueva contraseña (dejar vacío para no cambiar)</label>
+        <input type="password" name="clave" placeholder="Nueva contraseña opcional">
+
+        <div class="row" style="margin-top:16px">
+          <button class="btn" type="submit">Guardar cambios</button>
+          <a class="btn sec" href="{{ url_for('usuarios') }}">Cancelar</a>
+        </div>
+      </form>
+    {% else %}
+      <h2>➕ Nuevo usuario</h2>
+      <form method="post" action="{{ url_for('usuarios') }}">
+        <label>Documento de identidad</label>
+        <input name="documento" required>
+
+        <label>Nombre completo</label>
+        <input name="nombre" required>
+
+        <label>Correo electrónico</label>
+        <input type="email" name="correo" required>
+
+        <label>Teléfono</label>
+        <input name="telefono">
+
+        <label>Rol</label>
+        <select name="rol">
+          <option value="Ciudadano">Ciudadano</option>
+          <option value="Administrador">Administrador</option>
+        </select>
+
+        <label>Contraseña</label>
+        <input type="password" name="clave" required>
+
+        <br><br>
+        <button class="btn" type="submit">Crear usuario</button>
+      </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

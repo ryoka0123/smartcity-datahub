@@ -16,7 +16,9 @@
     {% if r.estado_actual != 'Resuelto' %}
     <div class="card">
       <h2>Asignar cuadrilla</h2>
-      {% if cuadrillas %}
+      {% if session.get('usuario') and session['usuario']['rol'] != 'Administrador' %}
+      <p class="muted">🔒 Tu cuenta tiene rol <b>Ciudadano</b>. Para despachar cuadrillas municipales, <a href="{{ url_for('login') }}">inicia sesión como Administrador</a>.</p>
+      {% elif cuadrillas %}
       <form method="post" action="{{ url_for('asignar', id_reporte=r.id_reporte) }}">
         <label>Cuadrilla disponible</label>
         <select name="id_cuadrilla">

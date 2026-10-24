@@ -8,10 +8,10 @@ INSERT INTO zona_urbana (id_ciudad, nombre_zona, codigo_postal, nivel_prioridad_
 (1, 'Centro', '680006', 'Alta', 7.1193, -73.1227),
 (1, 'San Alonso', '680004', 'Media', 7.1305, -73.1162);
 
-INSERT INTO ciudadano (documento_identidad, nombre_completo, correo_electronico, telefono_contacto) VALUES
-('1098000001', 'Jonathan Alexis Guevara Basto', 'jonathan@correo.uts.edu.co', '3000000000'),
-('1098000002', 'María Fernanda Rojas', 'maria.rojas@correo.com', '3101112233'),
-('1098000003', 'Carlos Andrés Pinzón', 'carlos.pinzon@correo.com', '3159998877');
+INSERT INTO ciudadano (documento_identidad, nombre_completo, correo_electronico, telefono_contacto, rol, clave_acceso) VALUES
+('1098000001', 'Jonathan Alexis Guevara Basto', 'jonathan@correo.uts.edu.co', '3000000000', 'Administrador', 'uts2026'),
+('1098000002', 'María Fernanda Rojas', 'maria.rojas@correo.com', '3101112233', 'Ciudadano', '123456'),
+('1098000003', 'Carlos Andrés Pinzón', 'carlos.pinzon@correo.com', '3159998877', 'Ciudadano', '123456');
 
 INSERT INTO categoria_incidencia (nombre_categoria, tipo_ods_meta, sla_horas_respuesta, nivel_criticidad) VALUES
 ('Daño vial / hueco', 'ODS 11.2', 48, 'Media'),

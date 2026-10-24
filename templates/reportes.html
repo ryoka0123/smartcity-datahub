@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Reportes de incidencias</h1>
+{% if session.get('usuario') and session['usuario']['rol'] == 'Administrador' %}
+  <h1>Gestión General de Reportes (Vista Administrador)</h1>
+{% else %}
+  <h1>Mis Reportes Registrados (Vista Ciudadano)</h1>
+{% endif %}
 <div class="card">
   <form method="get" class="row">
     <label style="margin:0">Estado:</label>
@@ -13,16 +17,23 @@
 </div>
 <div class="card">
   <table>
-    <tr><th>#</th><th>Fecha</th><th>Zona</th><th>Categoría</th><th>SLA</th><th>Ciudadano</th><th>Estado</th></tr>
+    <tr><th>#</th><th>Fecha</th><th>Zona</th><th>Categoría</th><th>SLA</th><th>Ciudadano</th><th>Estado</th><th>Acciones</th></tr>
     {% for r in reportes %}
     <tr>
       <td><a href="{{ url_for('detalle_reporte', id_reporte=r.id_reporte) }}">{{ r.id_reporte }}</a></td>
       <td>{{ r.fecha_hora_reporte }}</td><td>{{ r.nombre_zona }}</td><td>{{ r.nombre_categoria }}</td>
       <td>{{ r.sla_horas_respuesta }} h</td><td>{{ r.nombre_completo }}</td>
       <td><span class="badge b-{{ r.estado_actual|replace(' ','-') }}">{{ r.estado_actual }}</span></td>
+      <td class="row" style="gap:6px">
+        <a class="btn sm" href="{{ url_for('detalle_reporte', id_reporte=r.id_reporte) }}">Ver</a>
+        <a class="btn sm sec" href="{{ url_for('editar_reporte', id_reporte=r.id_reporte) }}">Editar</a>
+        <form method="post" action="{{ url_for('eliminar_reporte', id_reporte=r.id_reporte) }}" onsubmit="return confirm('¿Eliminar reporte #{{ r.id_reporte }}?');">
+          <button class="btn sm" type="submit" style="background:#dc2626">Eliminar</button>
+        </form>
+      </td>
     </tr>
     {% else %}
-    <tr><td colspan="7" class="muted">No hay reportes con ese filtro.</td></tr>
+    <tr><td colspan="8" class="muted">No hay reportes con ese filtro.</td></tr>
     {% endfor %}
   </table>
 </div>

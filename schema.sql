@@ -25,6 +25,8 @@ CREATE TABLE IF NOT EXISTS ciudadano (
     nombre_completo TEXT NOT NULL,
     correo_electronico TEXT NOT NULL,
     telefono_contacto TEXT,
+    rol TEXT NOT NULL DEFAULT 'Ciudadano',
+    clave_acceso TEXT NOT NULL DEFAULT '123456',
     fecha_registro TEXT DEFAULT (datetime('now','localtime'))
 );
 

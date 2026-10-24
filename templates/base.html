@@ -10,11 +10,39 @@
 <body>
   <nav>
     <span class="logo">SmartCity DataHub</span>
-    <a href="{{ url_for('dashboard') }}">Panel</a>
-    <a href="{{ url_for('reportes') }}">Reportes</a>
-    <a href="{{ url_for('nuevo_reporte') }}">Nuevo reporte</a>
-    <a href="{{ url_for('sensores') }}">Sensores IoT</a>
-    <a href="{{ url_for('cuadrillas') }}">Cuadrillas</a>
+    {% if session.get('usuario') %}
+      {% if session['usuario']['rol'] == 'Administrador' %}
+        <!-- MENÚ EXCLUSIVO DE ADMINISTRADOR -->
+        <a href="{{ url_for('dashboard') }}">Panel Admin</a>
+        <a href="{{ url_for('reportes') }}">Todos los Reportes</a>
+        <a href="{{ url_for('nuevo_reporte') }}">+ Nuevo Reporte</a>
+        <a href="{{ url_for('sensores') }}">Sensores IoT</a>
+        <a href="{{ url_for('cuadrillas') }}">CRUD Cuadrillas</a>
+        <a href="{{ url_for('usuarios') }}">CRUD Usuarios</a>
+        <a href="{{ url_for('modelo_datos') }}">Modelo MER</a>
+      {% else %}
+        <!-- MENÚ EXCLUSIVO DE CIUDADANO -->
+        <a href="{{ url_for('dashboard') }}">Mi Panel</a>
+        <a href="{{ url_for('reportes') }}">Mis Reportes</a>
+        <a href="{{ url_for('nuevo_reporte') }}">+ Reportar Incidencia</a>
+        <a href="{{ url_for('sensores') }}">Calidad del Aire (IoT)</a>
+      {% endif %}
+    {% endif %}
+
+    <div style="margin-left:auto; display:flex; align-items:center; gap:12px">
+      {% if session.get('usuario') %}
+        <span style="font-size:13px; color:#e0f2fe">
+          👤 {{ session['usuario']['nombre'] }}
+          <span class="badge" style="background:{{ '#f59e0b' if session['usuario']['rol']=='Administrador' else '#38bdf8' }}; color:#0f172a; margin-left:4px">
+            {{ session['usuario']['rol'] }}
+          </span>
+        </span>
+        <a href="{{ url_for('logout') }}" style="background:#dc2626; color:#fff; padding:4px 10px; border-radius:5px; font-size:12px">Salir</a>
+      {% else %}
+        <a href="{{ url_for('login') }}" style="color:#cfe0f3">Iniciar sesión</a>
+        <a href="{{ url_for('registro') }}" style="background:#0070c0; color:#fff; padding:5px 12px; border-radius:5px; font-weight:600">Registrarse</a>
+      {% endif %}
+    </div>
   </nav>
   <main>
     {% with msgs = get_flashed_messages(with_categories=true) %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="max-width:480px; margin:28px auto">
+  <div class="card" style="padding:28px">
+    <h1 style="text-align:center; margin-bottom:6px">Crear cuenta</h1>
+    <p class="muted" style="text-align:center; margin-bottom:18px">
+      Registra tus datos para reportar y gestionar incidencias urbanas.
+    </p>
+    <form method="post" action="{{ url_for('registro') }}">
+      <label>Documento de identidad</label>
+      <input name="documento" placeholder="Número de cédula / identificación" required>
+
+      <label>Nombre completo</label>
+      <input name="nombre" placeholder="Nombres y apellidos" required>
+
+      <label>Correo electrónico</label>
+      <input type="email" name="correo" placeholder="correo@ejemplo.com" required>
+
+      <label>Teléfono de contacto</label>
+      <input name="telefono" placeholder="3001234567">
+
+      <label>Tipo de cuenta (Rol)</label>
+      <select name="rol">
+        <option value="Ciudadano">Ciudadano (Reportar incidencias)</option>
+        <option value="Administrador">Administrador (Gestión de cuadrillas y sistema)</option>
+      </select>
+
+      <label>Contraseña</label>
+      <input type="password" name="clave" placeholder="Crea una contraseña" required>
+
+      <button class="btn" type="submit" style="width:100%; margin-top:20px; padding:11px">
+        Registrarme
+      </button>
+    </form>
+
+    <div style="text-align:center; margin-top:18px; padding-top:14px; border-top:1px solid #e5e9f0; font-size:14px">
+      ¿Ya tienes cuenta? <a href="{{ url_for('login') }}" style="color:#0070c0; font-weight:600">Inicia sesión</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

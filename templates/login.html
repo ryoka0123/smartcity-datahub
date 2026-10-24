@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="max-width:440px; margin:36px auto">
+  <div class="card" style="padding:28px">
+    <h1 style="text-align:center; margin-bottom:6px">Iniciar sesión</h1>
+    <p class="muted" style="text-align:center; margin-bottom:20px">
+      Ingresa con tu correo electrónico o documento de identidad registrado.
+    </p>
+    <form method="post" action="{{ url_for('login') }}">
+      <label>Correo electrónico o Documento</label>
+      <input name="identificador" placeholder="correo@ejemplo.com o número de documento" required autofocus>
+
+      <label style="margin-top:14px">Contraseña</label>
+      <input type="password" name="clave" placeholder="••••••••" required>
+
+      <button class="btn" type="submit" style="width:100%; margin-top:20px; padding:11px">
+        Entrar al sistema
+      </button>
+    </form>
+
+    <div style="text-align:center; margin-top:18px; padding-top:14px; border-top:1px solid #e5e9f0; font-size:14px">
+      ¿No tienes una cuenta? <a href="{{ url_for('registro') }}" style="color:#0070c0; font-weight:600">Regístrate aquí</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

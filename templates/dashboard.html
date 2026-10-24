@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Panel de control · Bucaramanga</h1>
+{% if session.get('usuario') and session['usuario']['rol'] == 'Administrador' %}
+  <h1>Panel de Control Municipal (Rol: Administrador) · Bucaramanga</h1>
+{% else %}
+  <h1>Portal del Ciudadano · Mis Incidencias en Bucaramanga</h1>
+{% endif %}
 <div class="grid kpis" style="margin-bottom:18px">
   <div class="kpi"><strong>{{ kpis.total }}</strong><span>Reportes totales</span></div>
   <div class="kpi"><strong>{{ kpis.pendientes }}</strong><span>Pendientes</span></div>

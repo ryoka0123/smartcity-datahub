@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Editar Reporte #{{ r.id_reporte }}</h1>
+<div class="card" style="max-width:600px">
+  <form method="post" action="{{ url_for('editar_reporte', id_reporte=r.id_reporte) }}">
+    <label>Zona urbana</label>
+    <select name="id_zona">
+      {% for z in zonas %}
+        <option value="{{ z.id_zona }}" {{ 'selected' if z.id_zona == r.id_zona }}>{{ z.nombre_zona }}</option>
+      {% endfor %}
+    </select>
+
+    <label>Categoría</label>
+    <select name="id_categoria">
+      {% for c in categorias %}
+        <option value="{{ c.id_categoria }}" {{ 'selected' if c.id_categoria == r.id_categoria }}>{{ c.nombre_categoria }}</option>
+      {% endfor %}
+    </select>
+
+    {% if session.get('usuario') and session['usuario']['rol'] == 'Administrador' %}
+    <label>Estado actual (Solo modificable por Administrador)</label>
+    <select name="estado_actual">
+      {% for e in estados %}
+        <option value="{{ e }}" {{ 'selected' if e == r.estado_actual }}>{{ e }}</option>
+      {% endfor %}
+    </select>
+    {% else %}
+    <label>Estado actual</label>
+    <input value="{{ r.estado_actual }}" disabled>
+    {% endif %}
+
+    <label>Descripción del problema</label>
+    <textarea name="descripcion" rows="4" required>{{ r.descripcion_problema }}</textarea>
+
+    <div class="row" style="margin-top:16px">
+      <button class="btn" type="submit">Guardar cambios</button>
+      <a class="btn sec" href="{{ url_for('detalle_reporte', id_reporte=r.id_reporte) }}">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
